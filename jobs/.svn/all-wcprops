@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/FWI_elastic/!svn/ver/2/DENISE/trunk/jobs
+END
+DENISE_XC6000.job
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/DENISE_XC6000.job
+END
+fdmpi_mars_25.job
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/fdmpi_mars_25.job
+END
+fdelast_tromper_wik_1D_200.job
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/fdelast_tromper_wik_1D_200.job
+END
+fdmpi_mars_highres.job
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/fdmpi_mars_highres.job
+END
+fdmpi_clean_ring.sh
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/fdmpi_clean_ring.sh
+END
+fdmpi_mars_short.job
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/fdmpi_mars_short.job
+END
+fdmpi_mvapich_job.sh
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/fdmpi_mvapich_job.sh
+END
+fdmpi_mars.job
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/jobs/fdmpi_mars.job
+END

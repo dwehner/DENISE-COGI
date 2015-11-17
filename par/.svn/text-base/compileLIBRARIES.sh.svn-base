@@ -1,0 +1,9 @@
+cd ../contrib/aff
+make reinstall
+cd ../fourier
+make reinstall
+cd ../stfinv
+make reinstall
+cd ../../libcseife
+make all
+cd ../par

@@ -1,0 +1,180 @@
+/*------------------------------------------------------------------------
+ *   inversion for source time function 
+ *   31. August 2011 L. Rehor, T. Forbriger, M. Schaefer
+ *  ----------------------------------------------------------------------*/
+
+#include "fd.h"
+#include "stfinv/stfinv.h"
+#include "segy.h"
+
+void stf(FILE *fp, float **sectionvy, float ** sectionvy_obs, float ** sectionvx_obs, float ** sectionvy_conv, float ** sectionvx_conv, float * source_time_function, int  **recpos, int  **recpos_loc, 
+int ntr_glob,int ntr, float ** srcpos, int ishot, int ns, int iter, int nshots){ 
+
+	/* declaration of global variables */
+	extern float DT, DH;
+	extern int SEIS_FORMAT, MYID, NT;
+	extern char  SEIS_FILE_VY[STRING_SIZE], SEIS_FILE_VX[STRING_SIZE], PARA[STRING_SIZE], DATA_DIR[STRING_SIZE];
+	extern int TRKILL;
+	extern char TRKILL_FILE[STRING_SIZE];
+	
+	/* declaration of variables for trace killing */
+	int ** kill_tmp, *kill_vector, h, j;
+	char trace_kill_file[STRING_SIZE];	
+	FILE *ftracekill;
+	
+	/* --------------- declaration of variables --------------- */
+	unsigned int nrec, nsamp, i, npairs;
+	float dt;
+	float xr=0.0, yr=0.0;
+	float XS=0.0, YS=0.0;
+	char conv_x[STRING_SIZE], conv_y[STRING_SIZE], qw[STRING_SIZE], conv_x_tmp[STRING_SIZE], conv_y_tmp[STRING_SIZE];
+	
+	printf("\n================================================================================================\n\n");
+	printf("\n ***** Inversion of Source Time Function - shot: %d - it: %d ***** \n\n",ishot,iter);
+	
+	/* if TRKILL==1 a trace killing is applied */
+	if(TRKILL){
+	kill_tmp = imatrix(1,ntr_glob,1,nshots);
+	kill_vector = ivector(1,ntr_glob);
+
+	ftracekill=fopen(TRKILL_FILE,"r");
+
+	if (ftracekill==NULL) err(" Trace kill file could not be opened!");
+
+	for(i=1;i<=ntr_glob;i++){
+		for(j=1;j<=nshots;j++){
+			fscanf(ftracekill,"%d",&kill_tmp[i][j]);
+		}
+	}
+
+	fclose(ftracekill);
+
+	h=1;
+	for(i=1;i<=ntr_glob;i++){
+	   kill_vector[h] = kill_tmp[i][ishot];
+	   h++;
+	}
+	} /* end if(TRKILL)*/	
+	
+	if(TRKILL){
+		for(i=1;i<=ntr_glob;i++){
+		if(i==1)printf("\n ***** Trace killing is applied for trace: ***** \n ***** \t");
+			if(kill_vector[i]==1){
+				printf("%d \t",i);
+				for(j=1;j<=ns;j++){
+				sectionvy[i][j]=0.0;
+				sectionvy_obs[i][j]=0.0;
+						}
+				}	
+    		if(i==ntr_glob)printf(" ***** \n\n");
+		}
+	
+	}	
+	/* trace killing ends here */
+			
+	nrec=(unsigned int)ntr_glob;
+	nsamp=(unsigned int)ns;
+	dt=DT;
+	npairs=nrec;
+	
+	/* source coordinates are written into trace header fields */
+	XS=srcpos[1][ishot];	
+	YS=srcpos[2][ishot];
+	
+	/* TF Software: see libstfinv */
+		
+	struct CTriples data;
+	data.n=nrec;
+	data.triples=(struct CWaveformTriple *)malloc(nrec*sizeof(struct CWaveformTriple));
+	if (data.triples == NULL) {abort();}
+	for (i=0;i<nrec;i++){
+	
+		xr=recpos[1][i+1]*DH;
+		yr=recpos[2][i+1]*DH;
+		
+		data.triples[i].data=&sectionvy[i+1][1];
+		
+		data.triples[i].synthetics=&sectionvy_obs[i+1][1];
+		
+		data.triples[i].convolvedsynthetics=&sectionvy_conv[i+1][1];
+		
+		data.triples[i].header.sx=(unsigned int)iround(XS*1000.0);  /* X source coordinate */
+		data.triples[i].header.sy=0.0;
+		data.triples[i].header.sz=(unsigned int)iround(YS*1000.0);  /* source depth (positive) */
+		data.triples[i].header.rx=(unsigned int)iround(xr*1000.0);  /* group coordinates */
+		data.triples[i].header.ry=0.0;
+		data.triples[i].header.rz=(unsigned int)iround(yr*1000.0);
+		data.triples[i].header.sampling.n=nsamp;
+		data.triples[i].header.sampling.dt=dt;
+	}
+	
+	struct CWaveform stf;
+	stf.series = &source_time_function[1];
+	stf.sampling.n=nsamp;
+	stf.sampling.dt=dt;
+	
+	
+	struct CPairs pairs;
+	pairs.n=npairs;
+	pairs.pairs=(struct CWaveformPair *)malloc(npairs*sizeof(struct CWaveformPair));
+	if (pairs.pairs == NULL) { abort(); }
+
+	for (i=0; i<npairs; ++i){
+	  
+		pairs.pairs[i].synthetics=&sectionvx_obs[i+1][1];
+		pairs.pairs[i].convolvedsynthetics=&sectionvx_conv[i+1][1];
+		
+		pairs.pairs[i].sampling.n=nsamp;
+		pairs.pairs[i].sampling.dt=dt;
+	}
+
+	/*char para[]="fbd:tshift=0.0"; /* parameter string */
+	
+	initstfinvenginewithpairs(data, stf, pairs, PARA);
+		
+	runstfinvengine();
+	
+	/* END TF Software */
+	
+	/* --------------- writing out the convolved seismograms --------------- */
+	sprintf(conv_x_tmp,"%s_x.su.conv.shot%d",DATA_DIR,ishot);
+	printf(" PE %d is writing %d convolved seismograms (vx) for shot = %d to\n\t %s \n",MYID,ntr_glob,ishot,conv_x_tmp);
+	outseis_glob(fp,fopen(conv_x_tmp,"w"),1,sectionvx_conv,recpos,recpos_loc,ntr_glob,srcpos,0,ns,SEIS_FORMAT,ishot,0);
+	
+	
+	/* --------------- writing out the convolved seismograms --------------- */
+	sprintf(conv_y_tmp,"%s_y.su.conv.shot%d",DATA_DIR,ishot);
+	printf(" PE %d is writing %d convolved seismograms (vy) for shot = %d to\n\t %s \n",MYID,ntr_glob,ishot,conv_y_tmp);
+	outseis_glob(fp,fopen(conv_y_tmp,"w"),1,sectionvy_conv,recpos,recpos_loc,ntr_glob,srcpos,0,ns,SEIS_FORMAT,ishot,0);
+	
+	
+	
+	/* --------------- writing out the convolved seismograms --------------- */
+	sprintf(conv_x,"%s_x.su.conv.shot%d_it%d",DATA_DIR,ishot,iter);
+	printf(" PE %d is writing %d convolved seismograms (vx) for shot = %d to\n\t %s \n",MYID,ntr_glob,ishot,conv_x);
+	outseis_glob(fp,fopen(conv_x,"w"),1,sectionvx_conv,recpos,recpos_loc,ntr_glob,srcpos,0,ns,SEIS_FORMAT,ishot,1);
+	
+	
+	/* --------------- writing out the convolved seismograms --------------- */
+	sprintf(conv_y,"%s_y.su.conv.shot%d_it%d",DATA_DIR,ishot,iter);
+	printf(" PE %d is writing %d convolved seismograms (vy) for shot = %d to\n\t %s \n",MYID,ntr_glob,ishot,conv_y);
+	outseis_glob(fp,fopen(conv_y,"w"),1,sectionvy_conv,recpos,recpos_loc,ntr_glob,srcpos,0,ns,SEIS_FORMAT,ishot,1);
+	
+	/* --------------- writing out the source time function --------------- */
+	sprintf(qw,"%s.stf.shot%d_it%d",SEIS_FILE_VY,ishot,iter);
+	printf(" PE %d is writing source time function for shot = %d to\n\t %s \n",MYID,ishot,qw);
+	outseis_vector(fp,fopen(qw,"w"),1,source_time_function,recpos,recpos_loc,ntr,srcpos,0,ns,SEIS_FORMAT,ishot,1);
+			
+				
+	printf("\n\n================================================================================================\n");
+	
+	/*freestfinvengine();
+	free(data.triples);*/
+	
+	/* free memory for trace killing */
+	if(TRKILL){
+	free_imatrix(kill_tmp,1,ntr_glob,1,nshots);
+	free_ivector(kill_vector,1,ntr_glob);
+	}
+}
+

@@ -1,0 +1,173 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/FWI_elastic/!svn/ver/257/DENISE/trunk/par
+END
+snap_seis.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/snap_seis.m
+END
+sucat_all.sh
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/sucat_all.sh
+END
+receiver_simple.dat
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/receiver_simple.dat
+END
+sortseis.sh
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/sortseis.sh
+END
+copy_models.sh
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/copy_models.sh
+END
+plot.sh
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/plot.sh
+END
+make_movie1.m
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/make_movie1.m
+END
+sucat.sh
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/sucat.sh
+END
+compileDENISE.sh
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/par/compileDENISE.sh
+END
+start_forward.sh
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/par/start_forward.sh
+END
+lamhosts
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/FWI_elastic/!svn/ver/239/DENISE/trunk/par/lamhosts
+END
+snap.m
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/snap.m
+END
+compileLIBRARIES.sh
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/par/compileLIBRARIES.sh
+END
+startDENISE.sh
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/FWI_elastic/!svn/ver/239/DENISE/trunk/par/startDENISE.sh
+END
+script.m
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/FWI_elastic/!svn/ver/133/DENISE/trunk/par/script.m
+END
+del_jacobian_shot.sh
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/del_jacobian_shot.sh
+END
+shots_and_receiver.m
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/FWI_elastic/!svn/ver/133/DENISE/trunk/par/shots_and_receiver.m
+END
+del_jacobian.sh
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/del_jacobian.sh
+END
+sources_simple.dat
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/sources_simple.dat
+END
+copy_seis.sh
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/copy_seis.sh
+END
+su2mat.m
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/su2mat.m
+END
+sucat_p.sh
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/sucat_p.sh
+END
+source.dat
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/source.dat
+END
+susort.sh
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/susort.sh
+END
+copy_jacobian.sh
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/copy_jacobian.sh
+END
+receiver.dat
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/receiver.dat
+END
+fdveps.inp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/fdveps.inp
+END
+submit.sh
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/repos/FWI_elastic/!svn/ver/1/DENISE/trunk/par/submit.sh
+END

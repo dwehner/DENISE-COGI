@@ -1,0 +1,16 @@
+#!/bin/sh
+# #PBS -q altix-develop
+#PBS -l walltime=2:00:00
+#PBS -l ncpus=8
+#PBS -l mem=10gb
+#PBS -j eo
+# #PBS -m be -M tbohlen@geophysik.uni-kiel.de
+#PBS -N tromper_wik
+
+ulimit -a 
+uname -a
+pwd
+date
+
+cd /home/supge053/projects/scherseis/fdveps_mpi_2.0/par
+mpirun -np 8 ../bin/fdelast_ssg4 < fdveps_tromper_wik_1D_200.inp > fdveps_tromper_wik_1D_200.out

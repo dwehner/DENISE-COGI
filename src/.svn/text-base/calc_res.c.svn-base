@@ -1,0 +1,243 @@
+/*------------------------------------------------------------------------
+ *   Calculate Data Residuals                                  
+ *   last update 29/03/08, D.Koehn
+ *  ----------------------------------------------------------------------*/
+#include "fd.h"
+
+double calc_res(float **sectiondata, float **section, float **sectiondiff, float **sectiondiffold, int ntr, int ns, int LNORM, float L2, int itest, int sws, int swstestshot, int ntr_glob, int **recpos_loc, int nsrc_glob, int ishot, int iter){
+
+/* declaration of variables */
+extern float DT;
+extern int REC1, REC2, MYID;
+extern int TRKILL;
+extern char TRKILL_FILE[STRING_SIZE];
+extern int NORMALIZE, FC, TIMEWIN;
+float RMS, signL1, intseis;
+int Lcount,i,j,invtime,k,h, umax=0;
+float l2;
+float abs_data, abs_synthetics, data_mult_synthetics, intseis_data, intseis_synthetics;
+float intseis_section, intseis_sectiondata;
+float *picked_times=NULL;
+float **integrated_section=NULL, **integrated_sectiondata=NULL;
+
+if(TIMEWIN) picked_times = vector(1,ntr);
+
+/* sectiondiff will be set to zero*/
+umax=ntr*ns;
+zero(&sectiondiff[1][1],umax);
+
+
+/* declaration of variables for trace killing */
+int ** kill_tmp, *kill_vector;
+char trace_kill_file[STRING_SIZE];	
+FILE *ftracekill;
+if(TRKILL){
+  
+	/* sectiondiff will be set to zero*/
+	umax=ntr*ns;
+	zero(&sectiondiff[1][1],umax);
+	
+	kill_tmp = imatrix(1,ntr_glob,1,nsrc_glob);
+	kill_vector = ivector(1,ntr);
+
+	ftracekill=fopen(TRKILL_FILE,"r");
+
+	if (ftracekill==NULL) err(" Trace kill file could not be opened!");
+
+	for(i=1;i<=ntr_glob;i++){
+		for(j=1;j<=nsrc_glob;j++){
+			fscanf(ftracekill,"%d",&kill_tmp[i][j]);
+		}
+	}
+
+	fclose(ftracekill);
+
+	h=1;
+	for(i=1;i<=ntr;i++){
+	   kill_vector[h] = kill_tmp[recpos_loc[3][i]][ishot];
+	   h++;
+	}
+} /* end if(TRKILL)*/
+
+
+RMS=0.0;
+Lcount=1;  
+
+if(LNORM==6){
+
+	integrated_section = matrix(1,ntr,1,ns);
+	integrated_sectiondata = matrix(1,ntr,1,ns);
+
+/* Integration before TIMEWIN of measured and synthetic data  */
+intseis_section = 0.0;
+for(i=1;i<=ntr;i++){
+      	for(j=1;j<=ns;j++){
+		intseis_section += section[i][j];
+		integrated_section[i][j]=intseis_section*DT;
+		}
+	}
+intseis_sectiondata = 0.0;
+for(i=1;i<=ntr;i++){
+      	for(j=1;j<=ns;j++){
+		intseis_sectiondata += sectiondata[i][j];
+		integrated_sectiondata[i][j]=intseis_sectiondata*DT;
+		}
+	}
+} /* end of if LNORM==6 */
+
+if(TIMEWIN==1){
+if(LNORM==6){
+time_window(integrated_sectiondata, picked_times, iter, ntr_glob,recpos_loc, ntr, ns, ishot);
+time_window(integrated_section, picked_times, iter, ntr_glob,recpos_loc, ntr, ns, ishot);
+}
+time_window(sectiondata, picked_times, iter, ntr_glob,recpos_loc, ntr, ns, ishot);
+time_window(section, picked_times, iter, ntr_glob,recpos_loc, ntr, ns, ishot);}
+
+/*if(TIMEWIN==2){
+stalta(section, ntr, ns, picked_times);
+time_window(sectiondata, picked_times, iter, ntr, ns, ishot);
+time_window(section, picked_times, iter, ntr, ns, ishot);}*/
+
+if(NORMALIZE){
+if(LNORM==6){
+normalize_data(integrated_sectiondata,ntr,ns);
+normalize_data(integrated_section,ntr,ns);
+}
+normalize_data(sectiondata,ntr,ns);
+normalize_data(section,ntr,ns);
+}
+
+/* calculate RMS */
+/*for(i=1;i<=ntr;i++){
+      for(j=1;j<=ns;j++){*/
+      
+      /*RMS += (sectionpdata[i][j]-sectionvx[i][j]) * (sectionpdata[i][j]-sectionvx[i][j]);*/
+      /*RMS += (sectionpdata[i][j]) * (sectionpdata[i][j]);*/
+      
+/*      Lcount++;
+
+      }
+} */
+
+/*RMS=sqrt(RMS/Lcount);*/
+RMS=1.0;
+
+/* calculate weighted data residuals and reverse time direction */
+
+
+for(i=1;i<=ntr;i++){	
+	
+    if((TRKILL==1)&&(kill_vector[i]==1))
+    continue;	
+	
+    invtime=ns;
+    intseis = 0.0;
+    
+    if (LNORM==5){
+    	abs_data=0.0;
+	abs_synthetics=0.0;
+	data_mult_synthetics=0.0;
+	intseis_data=0.0;
+	intseis_synthetics=0.0;
+	
+	for(j=1;j<=ns;j++){
+		intseis_data+=sectiondata[i][j]*DT;
+		intseis_synthetics+=section[i][j]*DT;
+		abs_data+=intseis_data*intseis_data;
+		abs_synthetics+=intseis_synthetics*intseis_synthetics;
+		data_mult_synthetics+=intseis_synthetics*intseis_data;
+	}
+	abs_data=sqrt(abs_data);
+	abs_synthetics=sqrt(abs_synthetics);
+	
+	intseis_data=0.0;
+	intseis_synthetics=0.0;
+     }
+	
+      for(j=1;j<=ns;j++){
+                        /*printf("%d \t %d \t %e \t %e \n",i,j,sectionpdata[i][j],sectionp[i][j]);*/
+                        
+			
+			/* calculate L1 residuals */
+			if(LNORM==1){
+			if(((sectiondata[i][j]-section[i][j])/RMS)>0){signL1=1.0;}
+			if(((sectiondata[i][j]-section[i][j])/RMS)<0){signL1=-1.0;}
+			if(((sectiondata[i][j]-section[i][j])/RMS)==0){signL1=0.0;}
+			
+			sectiondiff[i][invtime]=signL1/RMS;
+			}
+			
+			/* calculate L2 residuals */
+			if(LNORM==2){
+			intseis += section[i][j]-sectiondata[i][j];
+			sectiondiff[i][invtime]=intseis*DT;
+			}
+
+			/* calculate Cauchy residuals */ 
+		        if(LNORM==3){
+			sectiondiff[i][invtime]=((sectiondata[i][j]-section[i][j])/RMS)/(1+(((sectiondata[i][j]-section[i][j])/RMS)*((sectiondata[i][j]-section[i][j])/RMS)))/RMS; 
+			}
+			
+			/* calculate sech residuals */
+			if(LNORM==4){
+			sectiondiff[i][invtime]=(tanh((sectiondata[i][j]-section[i][j])/RMS))/RMS;
+			}
+			
+			if(LNORM==5){
+			intseis_data += sectiondata[i][j]*DT;
+			intseis_synthetics += section[i][j]*DT;
+			sectiondiff[i][invtime]=((intseis_synthetics*data_mult_synthetics)/(abs_synthetics*abs_synthetics*abs_synthetics*abs_data)) - (intseis_data/(abs_synthetics*abs_data));
+			}
+				
+			if(LNORM==6){
+			sectiondiff[i][invtime]=integrated_section[i][j]-integrated_sectiondata[i][j];
+			}
+			
+			/*sectionpdiff[i][invtime]=sectionp[i][j];*/
+                        
+			/* calculate norm */
+			/*if((sws==1)&&(swstestshot==1)){*/
+			if((LNORM==2)&&(swstestshot==1)){
+			/*L2+=sectiondiff[i][invtime]*sectiondiff[i][invtime];*/
+			L2+=intseis*intseis*DT*DT; 
+			}
+			
+			if((LNORM==5)&&(swstestshot==1)){
+			/*L2+=sectiondiff[i][invtime]*sectiondiff[i][invtime];*/
+			L2-=(intseis_data*intseis_synthetics)/(abs_data*abs_synthetics);
+			}
+			
+			if((LNORM==6)&&(swstestshot==1)){
+			L2+=sectiondiff[i][invtime]*sectiondiff[i][invtime];
+			}
+
+			if((sws==2)&&(swstestshot==1)){
+			L2+=fabs(sectiondiff[i][invtime])*fabs(sectiondiffold[i][j]);
+			}
+				
+			/*L2+=sectiondiff[i][invtime];*/
+			
+						
+			invtime--;                                      /* reverse time direction */
+       } 
+}
+
+l2=L2;
+
+
+/*FC= 100;
+timedomain_filt(sectiondiff,FC,2,ntr,ns,2);*/
+
+if(TIMEWIN) free_vector(picked_times,1,ntr);
+if(LNORM==6){
+free_matrix(integrated_section,1,ntr,1,ns);
+free_matrix(integrated_sectiondata,1,ntr,1,ns);
+}
+if(TRKILL){
+free_imatrix(kill_tmp,1,ntr_glob,1,nsrc_glob);
+free_ivector(kill_vector,1,ntr);
+}
+
+
+return l2;
+} /* end of function */

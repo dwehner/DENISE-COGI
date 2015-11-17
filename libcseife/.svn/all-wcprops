@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife
+END
+cseife.c
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/cseife.c
+END
+cseife_gauss.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/cseife_gauss.c
+END
+cseife_rfk.c
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/cseife_rfk.c
+END
+cseife_rekfl.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/cseife_rekfl.c
+END
+cseife.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/cseife.h
+END
+cseife_tides.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/cseife_tides.c
+END
+cseife_deriv.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/cseife_deriv.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/FWI_elastic/!svn/ver/104/DENISE/trunk/libcseife/README
+END

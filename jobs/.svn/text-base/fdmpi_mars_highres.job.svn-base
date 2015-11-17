@@ -1,0 +1,12 @@
+#!/bin/bash
+#BSUB -W 24:00                                                 # max. wall clock time 4h
+#BSUB -n 30                                                   # number of processors
+#BSUB -o /work/home7/koehn/DENISE_marmousi/par/test.out         # output file
+#BSUB -eo /work/home7/koehn/DENISE_marmousi/par/error.out       # output error file
+
+echo Starting Program
+cd /work/home7/koehn/DENISE_marmousi/par
+mpirun -np 30 /work/home7/koehn/DENISE_marmousi/bin/fdelast_ssg /work/home7/koehn/DENISE_marmousi/par/fdveps_highres.inp 
+echo Finished Program
+
+

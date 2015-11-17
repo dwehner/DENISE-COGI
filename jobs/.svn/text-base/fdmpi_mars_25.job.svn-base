@@ -1,0 +1,12 @@
+#!/bin/bash
+#BSUB -W 5:00                                                  # max. wall clock time 4h
+#BSUB -n 25                                                    # number of processors
+#BSUB -o /fastfs/koehn/DENISE/par/test.out                     # output file
+#BSUB -eo /fastfs/koehn/DENISE/par/error.out                   # output error file
+
+echo Starting Program
+cd /fastfs/koehn/DENISE/par
+mpirun -np 25 /fastfs/koehn/DENISE/bin/fdelast_ssg /fastfs/koehn/DENISE/par/fdveps.inp 
+echo Finished Program
+
+

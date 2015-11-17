@@ -1,0 +1,2 @@
+job_submit -c p -t 1440 -m 10000 -p 30 mpirun /home/ws/bi107/DENISE_marmousi/bin/fdelast_ssg /home/ws/bi107/DENISE_marmousi/par/fdveps.inp
+
